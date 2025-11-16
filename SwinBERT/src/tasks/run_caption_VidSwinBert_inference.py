@@ -48,10 +48,13 @@ def _transforms(args, frames):
     raw_video_prcoess = Compose(raw_video_crop_list)
 
     frames = frames.numpy()
-    # --- Patch: default file_type for training ---
+    # --- Patch for training mode: ensure missing attributes exist ---
     if not hasattr(args, "file_type"):
         args.file_type = "video"
-    # --------------------------------------------
+    if not hasattr(args, "file_format"):
+        args.file_format = "mp4"
+    # ---------------------------------------------------------------
+
     if args.file_type == 'video':
         frames = np.transpose(frames, (0, 2, 3, 1))
     num_of_frames, height, width, channels = frames.shape
