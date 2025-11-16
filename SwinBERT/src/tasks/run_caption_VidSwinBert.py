@@ -112,9 +112,10 @@ def mixed_precision_init(args, model):
         scaler = GradScaler(enabled=True)
         logger.info("Using native PyTorch AMP instead of Apex.")
 
-    return args, model, optimizer, scheduler
+    return args, model, optimizer, scheduler, scaler
 
-def train(args, train_dataloader, val_dataloader, model, tokenizer, training_saver, optimizer, scheduler):
+def train(args, train_dataloader, val_dataloader, model, tokenizer, training_saver, optimizer, scheduler, scaler):
+    
     meters = MetricLogger(delimiter='  ')
     max_iter = args.max_iter
     max_global_step = args.max_global_step
@@ -191,9 +192,8 @@ def train(args, train_dataloader, val_dataloader, model, tokenizer, training_sav
         elif args.mixed_precision_method == "fairscale":
             scaler.scale(loss).backward()
         else:
-            # apex
-            with amp.scale_loss(loss, optimizer, delay_unscale=not backward_now) as scaled_loss:
-                scaled_loss.backward()
+            # ✅ Use native PyTorch AMP GradScaler
+            scaler.scale(loss).backward()
         if backward_now:
             global_step += 1
             TB_LOGGER.add_scalar('train/loss', running_loss.val, global_step)
@@ -208,8 +208,9 @@ def train(args, train_dataloader, val_dataloader, model, tokenizer, training_sav
             
             if args.max_grad_norm != -1:
                 grad_norm = torch.nn.utils.clip_grad_norm_(
-                    amp.master_params(optimizer), args.max_grad_norm)
+                    model.parameters(), args.max_grad_norm)
                 TB_LOGGER.add_scalar("train/grad_norm", grad_norm, global_step)
+
             TB_LOGGER.step()
             if args.mixed_precision_method == "deepspeed":
                 model.step()
@@ -668,8 +669,9 @@ def main(args):
         args.global_iters_per_epoch = args.max_global_step // args.num_train_epochs
         args.save_steps = args.global_iters_per_epoch
 
-        args, vl_transformer, optimizer, scheduler = mixed_precision_init(args, vl_transformer)
-        train(args, train_dataloader, val_dataloader, vl_transformer, tokenizer, training_saver, optimizer, scheduler)
+        args, vl_transformer, optimizer, scheduler, scaler = mixed_precision_init(args, vl_transformer)
+        train(args, train_dataloader, val_dataloader, vl_transformer, tokenizer, training_saver, optimizer, scheduler, scaler)
+
 
     elif args.do_eval:
         val_dataloader = make_data_loader(args, args.val_yaml, tokenizer, args.distributed, is_train=False)

@@ -17,6 +17,36 @@ from src.utils.logger import LOGGER as logger
 from src.tasks.run_caption_VidSwinBert_inference import _online_video_decode, _transforms
 import yaml
 
+def collate_skip_none(batch):
+    """Custom collate_fn that safely filters out None samples before collation."""
+    # Filter out None samples
+    batch = [b for b in batch if b is not None]
+
+    # If all samples are None, return an empty batch
+    if len(batch) == 0:
+        print("[WARN] Empty batch after filtering bad samples — skipping this batch.")
+        return ([], [], [])
+
+    try:
+        collated = torch.utils.data.dataloader.default_collate(batch)
+    except TypeError:
+        # Fallback: manually filter elements that are None inside tuples
+        clean_batch = []
+        for b in batch:
+            if b is None:
+                continue
+            if isinstance(b, tuple):
+                clean_batch.append(tuple(x for x in b if x is not None))
+            else:
+                clean_batch.append(b)
+        collated = torch.utils.data.dataloader.default_collate(clean_batch)  # ✅ FIXED LINE
+
+    # 🩹 Force consistent 3-tuple output (keys, tensors, meta)
+    if isinstance(collated, (list, tuple)):
+        if len(collated) == 2:
+            collated = (collated[0], collated[1], [None] * len(collated[0]))
+
+    return collated
 
 # =====================================================
 #   NEW: RawVideoDataset (uses same pipeline as inference)
@@ -51,8 +81,17 @@ class RawVideoDataset(Dataset):
             caption = caption[0]  # pick first if multiple available
 
         # Decode and preprocess frames (same as inference)
+        if not os.path.exists(video_path):
+            print(f"[ERROR] Missing video file: {video_path}")
+            return None
+        
         frames = _online_video_decode(self.args, video_path)
         frames = _transforms(self.args, frames)
+        
+        if frames is None:
+            print(f"[WARN] Failed to decode or transform: {video_path}")
+            return None
+
 
         # Tensorize the sample for training
         tensorized = self.tensorizer.tensorize_example_e2e(caption, frames)
@@ -149,7 +188,7 @@ def make_data_loader(args, yaml_file, tokenizer, is_distributed=True,
 
     data_loader = torch.utils.data.DataLoader(
         dataset, num_workers=args.num_workers, batch_sampler=batch_sampler,
-        pin_memory=True, worker_init_fn=init_seeds,
+        pin_memory=True, worker_init_fn=init_seeds,collate_fn=collate_skip_none
     )
     return data_loader
 
