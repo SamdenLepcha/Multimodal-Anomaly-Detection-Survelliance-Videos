@@ -1,37 +1,81 @@
 """
 Copyright (c) Microsoft Corporation.
 Licensed under the MIT license.
-
+Modified for raw video fine-tuning by Samden Lepcha.
 """
+
+import os
 import os.path as op
 import torch
+from torch.utils.data import Dataset
 from src.utils.comm import get_world_size
-# Commenting to use the Raw Video Files instead
-#from .vision_language_tsv import (VisionLanguageTSVYamlDataset)
-from .video_captioning_rawvideo import RawVideoDataset
 from .caption_tensorizer import build_tensorizer
 from .data_sampler import DistributedSamplerLimited, NodeSplitSampler
 from src.utils.logger import LOGGER as logger
 
+# ✅ Import your existing inference utilities
+from src.tasks.run_caption_VidSwinBert_inference import _online_video_decode, _transforms
+import yaml
 
+
+# =====================================================
+#   NEW: RawVideoDataset (uses same pipeline as inference)
+# =====================================================
+class RawVideoDataset(Dataset):
+    def __init__(self, args, yaml_file, tokenizer, tensorizer, is_train=True, on_memory=False):
+        self.args = args
+        self.tokenizer = tokenizer
+        self.tensorizer = tensorizer
+        self.is_train = is_train
+
+        # Load YAML file
+        with open(yaml_file, "r") as f:
+            data = yaml.safe_load(f)
+
+        self.videos = data.get("train_videos", [])
+        self.captions = data.get("captions", [])
+
+        assert len(self.videos) == len(self.captions), (
+            f"YAML mismatch: {len(self.videos)} videos but {len(self.captions)} captions"
+        )
+
+        logger.info(f"Loaded {len(self.videos)} video-caption pairs from {yaml_file}")
+
+    def __len__(self):
+        return len(self.videos)
+
+    def __getitem__(self, idx):
+        video_path = self.videos[idx]
+        caption = self.captions[idx]
+        if isinstance(caption, list):
+            caption = caption[0]  # pick first if multiple available
+
+        # Decode and preprocess frames (same as inference)
+        frames = _online_video_decode(self.args, video_path)
+        frames = _transforms(self.args, frames)
+
+        # Tensorize the sample for training
+        tensorized = self.tensorizer.tensorize_example_e2e(caption, frames)
+        return (video_path, tensorized, None)  # consistent with training loop expectations
+
+
+# =====================================================
+#   Build Dataset and DataLoader
+# =====================================================
 def build_dataset(args, yaml_file, tokenizer, is_train=True):
-    logger.info(f'yaml_file:{yaml_file}')
+    logger.info(f'YAML file: {yaml_file}')
     if not op.isfile(yaml_file):
         yaml_file = op.join(args.data_dir, yaml_file)
-        assert op.isfile(yaml_file), f"{yaml_file} does not exists"
+        assert op.isfile(yaml_file), f"{yaml_file} does not exist"
     tensorizer = build_tensorizer(args, tokenizer, is_train=is_train)
-    # dataset_class = VisionLanguageTSVYamlDataset
-    # return dataset_class(args, yaml_file, tokenizer, tensorizer, is_train, args.on_memory)
     dataset_class = RawVideoDataset
-    return dataset_class(args, yaml_file, tokenizer, tensorizer, is_train)
+    return dataset_class(args, yaml_file, tokenizer, tensorizer, is_train, args.on_memory)
 
 
 class IterationBasedBatchSampler(torch.utils.data.sampler.BatchSampler):
-    """
-    Wraps a BatchSampler, resampling from it until
+    """Wraps a BatchSampler, resampling from it until
     a specified number of iterations have been sampled
     """
-
     def __init__(self, batch_sampler, num_iterations, start_iter=0):
         self.batch_sampler = batch_sampler
         self.num_iterations = num_iterations
@@ -40,9 +84,6 @@ class IterationBasedBatchSampler(torch.utils.data.sampler.BatchSampler):
     def __iter__(self):
         iteration = self.start_iter
         while iteration <= self.num_iterations:
-            # if the underlying sampler has a set_epoch method, like
-            # DistributedSampler, used for making each process see
-            # a different split of the dataset, then set it
             if hasattr(self.batch_sampler.sampler, "set_epoch"):
                 self.batch_sampler.sampler.set_epoch(iteration)
             for batch in self.batch_sampler:
@@ -68,58 +109,50 @@ def make_batch_data_sampler(sampler, images_per_gpu, num_iters=None, start_iter=
 
 def make_data_sampler(dataset, shuffle, distributed, random_seed, limited_samples=-1):
     if distributed:
-        if dataset.is_composite:
-            # first_epoch_skip_shuffle not working yet
+        if hasattr(dataset, "is_composite") and dataset.is_composite:
             logger.info("Enable NodeSplitSampler with first_epoch_skip_shuffle=True")
             return NodeSplitSampler(
                 dataset, shuffle=shuffle, random_seed=random_seed,
                 first_epoch_skip_shuffle=True)
         elif limited_samples < 1:
             return torch.utils.data.distributed.DistributedSampler(dataset, shuffle=shuffle, seed=random_seed)
-        else:  # use limited distributed sampler
+        else:
             return DistributedSamplerLimited(dataset, shuffle=shuffle, limited=limited_samples)
-    if shuffle:
-        sampler = torch.utils.data.sampler.RandomSampler(dataset)
-    else:
-        sampler = torch.utils.data.sampler.SequentialSampler(dataset)
-    return sampler
+    return torch.utils.data.sampler.RandomSampler(dataset) if shuffle else torch.utils.data.sampler.SequentialSampler(dataset)
 
 
 def make_data_loader(args, yaml_file, tokenizer, is_distributed=True,
-        is_train=True, start_iter=0, num_gpus=8):
+                     is_train=True, start_iter=0, num_gpus=8):
 
     dataset = build_dataset(args, yaml_file, tokenizer, is_train=is_train)
-    if is_train==True:
+
+    if is_train:
         shuffle = True
         images_per_gpu = args.per_gpu_train_batch_size
         images_per_batch = images_per_gpu * get_world_size()
         iters_per_batch = len(dataset) // images_per_batch
         num_iters = iters_per_batch * args.num_train_epochs
-        logger.info("Train with {} images per GPU.".format(images_per_gpu))
-        logger.info("Total batch size {}".format(images_per_batch))
-        logger.info("Total training steps {}".format(num_iters))
+        logger.info(f"Train with {images_per_gpu} samples per GPU")
+        logger.info(f"Total batch size {images_per_batch}")
+        logger.info(f"Total training steps {num_iters}")
     else:
         shuffle = False
-        images_per_gpu = args.per_gpu_eval_batch_size
+        images_per_gpu = getattr(args, "per_gpu_eval_batch_size", 1)
         num_iters = None
         start_iter = 0
 
-    if hasattr(args, 'limited_samples'):
-        limited_samples = args.limited_samples // num_gpus
-    else:
-        limited_samples = -1
+    limited_samples = getattr(args, "limited_samples", -1) // num_gpus if hasattr(args, "limited_samples") else -1
     random_seed = args.seed
-    sampler = make_data_sampler(
-        dataset, shuffle, is_distributed, limited_samples=limited_samples,
-        random_seed=random_seed)
-    batch_sampler = make_batch_data_sampler(
-        sampler, images_per_gpu, num_iters, start_iter
-    )
+
+    sampler = make_data_sampler(dataset, shuffle, is_distributed, random_seed, limited_samples)
+    batch_sampler = make_batch_data_sampler(sampler, images_per_gpu, num_iters, start_iter)
+
     data_loader = torch.utils.data.DataLoader(
         dataset, num_workers=args.num_workers, batch_sampler=batch_sampler,
         pin_memory=True, worker_init_fn=init_seeds,
     )
     return data_loader
+
 
 def init_seeds(seed=88):
     import os, random

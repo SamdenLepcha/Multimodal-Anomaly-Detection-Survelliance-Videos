@@ -107,13 +107,11 @@ def mixed_precision_init(args, model):
             reduce_buffer_size= 0 if args.fairscale_fp16 else 2 ** 23, # 2 ** 23 is the default value
             reduce_fp16=args.fairscale_fp16)
     else:
-        # opt_level is O0, Apex will run as fp32
-        model, optimizer = amp.initialize(
-            model, optimizer,
-            enabled=True,
-            opt_level=f'O{args.amp_opt_level}')
-        if args.distributed: #
-            model = DDP(model)
+        # ✅ Use native PyTorch AMP (no apex)
+        from torch.cuda.amp import GradScaler
+        scaler = GradScaler(enabled=True)
+        logger.info("Using native PyTorch AMP instead of Apex.")
+
     return args, model, optimizer, scheduler
 
 def train(args, train_dataloader, val_dataloader, model, tokenizer, training_saver, optimizer, scheduler):
