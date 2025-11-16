@@ -107,3 +107,22 @@
 11/16/2025 19:40:04 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/val.yaml
 11/16/2025 19:40:06 - INFO - __main__ -   Loaded 3534 video-caption pairs from ../UCA-Dataset/w-captions/val.yaml
 11/16/2025 19:40:06 - INFO - __main__ -   Using native PyTorch AMP instead of Apex.
+11/16/2025 19:45:23 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 19:45:23 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 19:45:23 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 19:45:23 - INFO - __main__ -   video swin (config path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 19:45:23 - INFO - __main__ -   video swin (model path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 19:45:25 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 19:45:28 - INFO - __main__ -   Init model from scratch.
+11/16/2025 19:45:28 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 19:45:28 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:45:34 - INFO - __main__ -   Loaded 15677 video-caption pairs from ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:45:34 - INFO - __main__ -   Train with 1 samples per GPU
+11/16/2025 19:45:34 - INFO - __main__ -   Total batch size 1
+11/16/2025 19:45:34 - INFO - __main__ -   Total training steps 156770
+11/16/2025 19:45:34 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:45:36 - INFO - __main__ -   Loaded 3534 video-caption pairs from ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:45:36 - INFO - __main__ -   Using native PyTorch AMP instead of Apex.
+11/16/2025 19:45:36 - INFO - __main__ -   ==============================key difference
+11/16/2025 19:45:36 - INFO - __main__ -   keys in current_args but not in restore_args: total 3, ['config', 'dense_caption', 'dense_caption_num']
+11/16/2025 19:45:36 - INFO - __main__ -   keys in restore_args but not in current_args: total 0, []

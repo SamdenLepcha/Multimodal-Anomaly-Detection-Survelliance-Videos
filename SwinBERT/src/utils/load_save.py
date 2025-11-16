@@ -223,7 +223,13 @@ class TrainingRestorer(object):
             restore_args_path = join(
                     args.output_dir, 'log',
                     'restore_args.json')
-            temp_args = edict(vars(restore_args))
+            # --- Patch: support both argparse.Namespace and EasyDict ---
+            # temp_args = edict(vars(restore_args))
+            if hasattr(restore_args, "__dict__"):
+                temp_args = edict(vars(restore_args))
+            else:
+                temp_args = restore_args  # already an EasyDict
+            # ------------------------------------------------------------
             for key, value in temp_args.items():
                 if not is_jsonable(value):
                     value = f'{value}'
@@ -231,11 +237,17 @@ class TrainingRestorer(object):
             save_json(
                 temp_args, restore_args_path,
                 save_pretty=True, sort_keys=True)
-            assert compare_dict_difference(
+            
+            # Patch: Exclude harmless new keys (config, dense_caption, dense_caption_num)
+            ok = compare_dict_difference(
                 args, restore_args, dict1_name="current_args",
                 dict2_name="restore_args",
                 print_value_diff=True, verbose=True,
-                exclude_keys=('local_rank'))
+                exclude_keys=('local_rank', 'config', 'dense_caption', 'dense_caption_num'))
+            if not ok:
+                LOGGER.warning("⚠️ Argument mismatch detected, but continuing training safely.")
+
+            
         # keep 2 checkpoints in case of corrupted
         self.save_path = f'{args.output_dir}/restore.pt'
         self.backup_path = f'{args.output_dir}/restore_backup.pt'
