@@ -518,7 +518,15 @@ def get_custom_args(base_config):
 
 def main(args):
     if args.do_train==False or args.do_eval==True:
-        args = update_existing_config_for_inference(args) 
+        args = update_existing_config_for_inference(args)
+
+    # --- Patch: ensure dense caption attributes exist (required by video decoding) ---
+    if not hasattr(args, "dense_caption"):
+        args.dense_caption = False  # training uses one caption per full video
+    if not hasattr(args, "dense_caption_num"):
+        args.dense_caption_num = 16  # frames per clip if segmentation happens
+    # -------------------------------------------------------------------------------
+
 
     # global training_saver
     args.device = torch.device(args.device)
