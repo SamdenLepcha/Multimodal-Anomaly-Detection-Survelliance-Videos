@@ -1,0 +1,10 @@
+.ipynb_checkpoints/
+UCA-Dataset/original/
+UCA-Dataset/w-captions/train/
+UCA-Dataset/w-captions/test/
+UCA-Dataset/w-captions/val/
+kaggle.json
+swin_base_patch244_window877_kinetics400_22k.pth
+swin_base_patch244_window877_kinetics600_22k.pth
+pytorch_model.bin
+SwinBERT/models/table1/vatex/best-checkpoint/

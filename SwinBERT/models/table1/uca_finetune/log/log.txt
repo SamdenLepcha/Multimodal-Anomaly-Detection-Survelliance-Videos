@@ -1,0 +1,32 @@
+11/16/2025 17:21:09 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 17:21:09 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 17:21:09 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 17:21:09 - INFO - __main__ -   video swin (config path): /home/ubuntu/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 17:21:09 - INFO - __main__ -   video swin (model path): /home/ubuntu/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 17:24:16 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 17:24:16 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 17:24:16 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 17:24:16 - INFO - __main__ -   video swin (config path): /home/ubuntu/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 17:24:16 - INFO - __main__ -   video swin (model path): /home/ubuntu/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 17:24:18 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 17:24:21 - INFO - __main__ -   Init model from scratch.
+11/16/2025 17:24:21 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 17:24:21 - INFO - __main__ -   yaml_file:./w-captions/train.yaml
+11/16/2025 17:26:09 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 17:26:09 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 17:26:09 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 17:26:09 - INFO - __main__ -   video swin (config path): /home/ubuntu/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 17:26:09 - INFO - __main__ -   video swin (model path): /home/ubuntu/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 17:26:10 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 17:26:14 - INFO - __main__ -   Init model from scratch.
+11/16/2025 17:26:14 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 17:26:14 - INFO - __main__ -   yaml_file:../UCA-Dataset/w-captions/train.yaml
+11/16/2025 17:27:01 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 17:27:01 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 17:27:01 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 17:27:01 - INFO - __main__ -   video swin (config path): /home/ubuntu/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 17:27:01 - INFO - __main__ -   video swin (model path): /home/ubuntu/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 17:27:03 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 17:27:06 - INFO - __main__ -   Init model from scratch.
+11/16/2025 17:27:06 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 17:27:06 - INFO - __main__ -   yaml_file:../UCA-Dataset/w-captions/train.yaml
