@@ -126,3 +126,42 @@
 11/16/2025 19:45:36 - INFO - __main__ -   ==============================key difference
 11/16/2025 19:45:36 - INFO - __main__ -   keys in current_args but not in restore_args: total 3, ['config', 'dense_caption', 'dense_caption_num']
 11/16/2025 19:45:36 - INFO - __main__ -   keys in restore_args but not in current_args: total 0, []
+11/16/2025 19:54:19 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 19:54:19 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 19:54:19 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 19:54:19 - INFO - __main__ -   video swin (config path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 19:54:19 - INFO - __main__ -   video swin (model path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 19:54:21 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 19:54:24 - INFO - __main__ -   Init model from scratch.
+11/16/2025 19:54:24 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 19:54:25 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:54:30 - INFO - __main__ -   Loaded 15677 video-caption pairs from ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:54:30 - INFO - __main__ -   Train with 1 samples per GPU
+11/16/2025 19:54:30 - INFO - __main__ -   Total batch size 1
+11/16/2025 19:54:30 - INFO - __main__ -   Total training steps 156770
+11/16/2025 19:54:30 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:54:32 - INFO - __main__ -   Loaded 3534 video-caption pairs from ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:54:32 - INFO - __main__ -   Using native PyTorch AMP instead of Apex.
+11/16/2025 19:54:32 - INFO - __main__ -   ==============================value difference
+11/16/2025 19:59:18 - INFO - __main__ -   Pytorch version is: 2.7.0
+11/16/2025 19:59:18 - INFO - __main__ -   Cuda version is: 12.8
+11/16/2025 19:59:18 - INFO - __main__ -   cuDNN version is : 90800
+11/16/2025 19:59:18 - INFO - __main__ -   video swin (config path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/src/modeling/video_swin/swin_base_patch244_window877_kinetics400_22k.py
+11/16/2025 19:59:18 - INFO - __main__ -   video swin (model path): /home/ubuntu/Multimodal-Anomaly-Detection-Survelliance-Videos/SwinBERT/models/video_swin_transformer/swin_base_patch244_window877_kinetics400_22k.pth
+11/16/2025 19:59:20 - INFO - __main__ -   Update config parameter img_feature_dim: -1 -> 512
+11/16/2025 19:59:24 - INFO - __main__ -   Init model from scratch.
+11/16/2025 19:59:24 - INFO - __main__ -   Model total parameters: 136,106,810
+11/16/2025 19:59:24 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:59:30 - INFO - __main__ -   Loaded 15677 video-caption pairs from ../UCA-Dataset/w-captions/train.yaml
+11/16/2025 19:59:30 - INFO - __main__ -   Train with 1 samples per GPU
+11/16/2025 19:59:30 - INFO - __main__ -   Total batch size 1
+11/16/2025 19:59:30 - INFO - __main__ -   Total training steps 156770
+11/16/2025 19:59:30 - INFO - __main__ -   YAML file: ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:59:31 - INFO - __main__ -   Loaded 3534 video-caption pairs from ../UCA-Dataset/w-captions/val.yaml
+11/16/2025 19:59:31 - INFO - __main__ -   Using native PyTorch AMP instead of Apex.
+11/16/2025 19:59:31 - INFO - __main__ -   ============================== value difference
+11/16/2025 19:59:31 - INFO - __main__ -   {
+    "device": "[('current_args', device(type='cuda')), ('restore_args', 'cuda')]"
+}
+11/16/2025 19:59:31 - INFO - __main__ -   Training/evaluation parameters: {'data_dir': 'datasets', 'output_dir': './models/table1/uca_finetune/', 'train_yaml': '../UCA-Dataset/w-captions/train.yaml', 'model_name_or_path': './models/captioning/bert-base-uncased/', 'config_name': '', 'tokenizer_name': '', 'num_hidden_layers': -1, 'hidden_size': -1, 'num_attention_heads': -1, 'intermediate_size': -1, 'img_feature_dim': 512, 'load_partial_weights': False, 'freeze_embedding': False, 'drop_out': 0.1, 'max_seq_length': 64, 'max_seq_a_length': 64, 'max_img_seq_length': 784, 'do_lower_case': True, 'add_od_labels': False, 'od_label_conf': 0.0, 'use_asr': False, 'unique_labels_on': False, 'no_sort_by_conf': False, 'mask_prob': 0.15, 'max_masked_tokens': 3, 'attn_mask_type': 'seq2seq', 'text_mask_type': 'random', 'tag_to_mask': ['noun', 'verb'], 'mask_tag_prob': -1, 'tagger_model_path': 'models/flair/en-pos-ontonotes-fast-v0.5.pt', 'random_mask_prob': 0, 'on_memory': False, 'effective_batch_size': 1, 'per_gpu_train_batch_size': 1, 'num_workers': 4, 'limited_samples': -1, 'learning_rate': 3e-05, 'weight_decay': 0.05, 'adam_epsilon': 1e-08, 'max_grad_norm': 1.0, 'warmup_ratio': 0.1, 'scheduler': 'warmup_linear', 'gradient_accumulation_steps': 4, 'num_train_epochs': 10, 'logging_steps': 20, 'save_steps': 3919, 'restore_ratio': 0.05, 'device': device(type='cuda'), 'seed': 88, 'local_rank': 0, 'mixed_precision_method': 'apex', 'zero_opt_stage': -1, 'amp_opt_level': 0, 'deepspeed_fp16': False, 'fairscale_fp16': False, 'pretrained_checkpoint': '', 'debug': False, 'debug_speed': False, 'config': None, 'eval_model_dir': '', 'val_yaml': '../UCA-Dataset/w-captions/val.yaml', 'test_yaml': 'coco_caption/test.yaml', 'do_train': True, 'do_test': False, 'do_eval': False, 'evaluate_during_training': False, 'per_gpu_eval_batch_size': 64, 'mask_img_feat': False, 'max_masked_img_tokens': 10, 'tie_weights': False, 'label_smoothing': 0, 'drop_worst_ratio': 0, 'drop_worst_after': 0, 'max_gen_length': 64, 'output_hidden_states': False, 'num_return_sequences': 1, 'num_beams': 1, 'num_keep_best': 1, 'temperature': 1, 'top_k': 0, 'top_p': 1, 'repetition_penalty': 1, 'length_penalty': 1, 'use_cbs': False, 'min_constraints_to_satisfy': 2, 'use_hypo': False, 'decoding_constraint': False, 'remove_bad_endings': False, 'scst': False, 'sc_train_sample_n': 5, 'sc_baseline_type': 'greedy', 'cider_cached_tokens': 'coco_caption/gt/coco-train-words.p', 'max_num_frames': 32, 'img_res': 224, 'patch_size': 32, 'grid_feat': True, 'kinetics': '400', 'pretrained_2d': False, 'vidswin_size': 'base', 'freeze_backbone': False, 'use_checkpoint': False, 'backbone_coef_lr': 0.001, 'reload_pretrained_swin': False, 'learn_mask_enabled': False, 'loss_sparse_w': 0, 'sparse_mask_soft2hard': False, 'transfer_method': -1, 'att_mask_expansion': -1, 'resume_checkpoint': './models/table1/vatex/best-checkpoint/model.bin', 'test_video_fname': 'None', 'dense_caption': False, 'dense_caption_num': 16, 'num_gpus': 1, 'distributed': False, 'max_iter': 156770, 'max_global_step': 39192, 'global_iters_per_epoch': 3919}
+11/16/2025 19:59:31 - INFO - __main__ -   saving args to ./models/table1/uca_finetune/log/args.json

@@ -12,6 +12,8 @@
     "debug_speed": false,
     "decoding_constraint": false,
     "deepspeed_fp16": false,
+    "dense_caption": false,
+    "dense_caption_num": 16,
     "device": "cuda",
     "distributed": false,
     "do_eval": false,

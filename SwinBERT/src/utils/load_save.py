@@ -158,11 +158,20 @@ def compare_dict_difference(dict1, dict2, dict1_name="dict1",
 
     if len(value_diff_dict) == 0 and len(key_diff_list) == 0:
         return True
-
+        
     def print_value_diff():
         if verbose and print_value_diff:
-            LOGGER.info("=" * 30 + "value difference")
-            LOGGER.info(f"{json.dumps(value_diff_dict, indent=4)}")
+            safe_dict = {}
+            for k, v in value_diff_dict.items():
+                # Convert non-JSON types to string safely
+                try:
+                    json.dumps(v)
+                    safe_dict[k] = v
+                except TypeError:
+                    safe_dict[k] = str(v)
+            LOGGER.info("=" * 30 + " value difference")
+            LOGGER.info(json.dumps(safe_dict, indent=4))
+
 
     if len(value_diff_dict) > 0  and len(key_diff_list) == 0:
         # OK
