@@ -1,6 +1,6 @@
 visdom
 matplotlib
-sklearn
+scikit-learn
 tqdm
 pandas
 scipy
