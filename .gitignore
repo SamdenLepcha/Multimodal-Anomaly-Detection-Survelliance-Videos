@@ -1,3 +1,6 @@
+SwinBERT/swinbert_env/
+TEVAD/ckpt/
+.DS_Store
 TEVAD/tev_env/
 TEVAD/save/Crime/
 I3D_Feature_Extraction_resnet/pretrained/
