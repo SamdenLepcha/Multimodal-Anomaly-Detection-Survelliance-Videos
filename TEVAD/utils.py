@@ -6,7 +6,7 @@ import random, os
 
 class Visualizer(object):
     def __init__(self, env='default', **kwargs):
-        self.vis = visdom.Visdom(env=env, **kwargs)
+        self.vis = visdom.Visdom(env=env)
         self.index = {}
 
     def plot_lines(self, name, y, **kwargs):
@@ -102,8 +102,8 @@ def save_best_record(test_info, file_path, metrics):
     fo.close()
 
 
-def vid_name_to_path(vid_name, mode):  # TODO: change absolute paths! (only used by visual codes)
-    root_dir = '../SwinBERT/datasets/Crime/data/'
+def vid_name_to_path(vid_name, mode):
+    root_dir = '/home/ubuntu/uca-virginia/original/'
     types = ["Abuse", "Arrest", "Arson", "Assault", "Burglary", "Explosion", "Fighting", "RoadAccidents", "Robbery",
              "Shooting", "Shoplifting", "Stealing", "Vandalism"]
     for t in types:

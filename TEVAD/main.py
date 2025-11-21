@@ -75,10 +75,7 @@ if __name__ == '__main__':
 
         if step % 5 == 0 and step > 50:
 
-            # Free cached training memory so evaluation has headroom on GPU
-            torch.cuda.empty_cache()
             auc, ap = test(test_loader, model, args, viz, device)
-            torch.cuda.empty_cache()
             test_info["epoch"].append(step)
             test_info["test_AUC"].append(auc)
             test_info["test_AP"].append(ap)
