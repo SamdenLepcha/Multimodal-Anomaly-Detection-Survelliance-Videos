@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Analysis Result</h2>
+    <p><b>Anomaly detected:</b> {{ anomaly }}</p>
+    <p><b>Max score:</b> {{ max_score }}</p>
+
+    <h3>Anomaly Curve</h3>
+    <img src="/{{ plot_path }}" width="600">
+
+    <h3>Video</h3>
+    <video width="600" controls>
+        <source src="/static/uploads/{{ video_name }}" type="video/mp4">
+    </video>
+</body>
+</html>
