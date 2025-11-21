@@ -45,10 +45,10 @@ class Dataset(data.Dataset):
                     print('abnormal list for shanghai tech')
             elif 'ucf' in self.dataset:
                 if self.is_normal:
-                    self.list = self.list[738:]
+                    self.list = self.list[810:]
                     print('normal list for ucf')
                 else:
-                    self.list = self.list[:738]
+                    self.list = self.list[:810]
                     print('abnormal list for ucf')
             elif 'violence' in self.dataset:
                 if self.is_normal:

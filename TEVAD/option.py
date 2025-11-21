@@ -25,7 +25,7 @@ parser.add_argument('--normal_weight', type=float, default=1, help='weight for n
 parser.add_argument('--abnormal_weight', type=float, default=1, help='weight for abnormal loss weights')
 parser.add_argument('--aggregate_text', action='store_true', default=False, help='whether to aggregate text features')
 parser.add_argument('--extra_loss', action='store_true', default=False, help='whether to use extra loss')
-parser.add_argument('--save_test_results', action='store_true', default=False, help='whether to save test results')
+parser.add_argument('--save_test_results', action='store_true', default=True, help='whether to save test results')
 parser.add_argument('--alpha', type=float, default=0.0001, help='weight for RTFM loss')
 parser.add_argument('--emb_folder', type=str, default='sent_emb_n', help='folder for text embeddings, used to differenciate different swinbert pretrained models')
 parser.add_argument('--emb_dim', type=int, default=768, help='dimension of text embeddings')
