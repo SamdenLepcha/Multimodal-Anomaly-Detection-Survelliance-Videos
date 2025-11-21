@@ -1,42 +1,58 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
+import uuid
+
 from models.tevad_runner import TEVADRunner
-from utils.video_utils import extract_10crop_i3d, extract_text_emb
-from utils.feature_utils import save_plot
+from utils.video_utils import save_uploaded_video
+from utils.feature_utils import extract_i3d_features, extract_text_features
+from utils.plot_utils import save_plot
+
+
+app = Flask(__name__)
 
 UPLOAD_DIR = "static/uploads"
 OUTPUT_DIR = "static/outputs"
 
-app = Flask(__name__)
-app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
+tevad = TEVADRunner()   # load TEVAD model once
 
-tevad = TEVADRunner(ckpt_path="ckpt/your_model.pth", device="cuda")
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    # save uploaded video
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    if "video" not in request.files:
+        return "No file uploaded", 400
+
     file = request.files["video"]
-    filepath = os.path.join(UPLOAD_DIR, file.filename)
-    file.save(filepath)
+    if file.filename == "":
+        return "Empty filename", 400
 
-    # 1. extract visual features
-    vis_feat = extract_10crop_i3d(filepath)  # -> [10, T, 2048]
+    # Save uploaded video
+    video_path = save_uploaded_video(file, UPLOAD_DIR)
 
-    # 2. text features
-    text_feat = extract_text_emb(filepath)   # -> [10, T, 768]
+    # STEP 1 — Visual I3D features
+    visual_feat = extract_i3d_features(video_path)
 
-    # 3. TEVAD inference
-    scores = tevad.run(vis_feat, text_feat)
+    # STEP 2 — Caption/Text features (SwinBERT)
+    text_feat = extract_text_features(video_path)
 
-    # 4. save visualization
+    # STEP 3 — TEVAD Anomaly Inference
+    scores, anomaly_flag = tevad.detect(visual_feat, text_feat)
+
+    # STEP 4 — Save anomaly curve plot
     plot_path = save_plot(scores, OUTPUT_DIR)
 
-    return render_template("result.html",
-                           video_name=file.filename,
-                           plot_path=plot_path,
-                           anomaly="YES" if scores.max() > 0.5 else "NO",
-                           max_score=float(scores.max()))
+    return render_template(
+        "result.html",
+        video_path=video_path,
+        plot_path=plot_path,
+        anomaly=anomaly_flag,
+        scores=scores.tolist()
+    )
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)

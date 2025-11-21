@@ -1,11 +1,16 @@
-# utils/video_utils.py
+import os
+import uuid
+import cv2
 
-import numpy as np
 
-def extract_i3d_features(video_path):
-    # TODO: plug your I3D inference code
-    return np.random.rand(100, 2048).astype(np.float32)
+def save_uploaded_video(file, upload_dir):
+    """ Save uploaded video to static/uploads with a random UUID filename """
+    os.makedirs(upload_dir, exist_ok=True)
 
-def generate_swinbert_embeddings(video_path):
-    # TODO: plug SwinBERT text caption + embedding generation
-    return np.random.rand(100, 768).astype(np.float32)
+    ext = file.filename.split(".")[-1]
+    fname = f"{uuid.uuid4().hex}.{ext}"
+
+    path = os.path.join(upload_dir, fname)
+    file.save(path)
+
+    return path

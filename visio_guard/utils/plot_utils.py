@@ -9,10 +9,11 @@ def save_plot(scores, out_dir):
     plt.figure(figsize=(10,4))
     plt.plot(scores, label="Anomaly score")
     plt.ylim([0, 1])
-    plt.xlabel("Frame index")
+    plt.xlabel("Snippet index")
     plt.ylabel("Score")
     plt.legend()
     plt.tight_layout()
     plt.savefig(path)
     plt.close()
+
     return path
