@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VisioGuard – TEVAD Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef0f3;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            width: 85%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+        }
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            color: #555;
+        }
+        
+        /* --- SCORE & VERDICT STYLING --- */
+        .verdict-box {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .v-normal { background-color: #28a745; } /* Green */
+        .v-anomaly { background-color: #dc3545; } /* Red */
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+        }
+        .score-item {
+            flex: 1;
+        }
+        .big-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+        }
+        .label {
+            font-size: 14px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        /* --- SCROLLABLE TABLE --- */
+        .table-container {
+            max-height: 400px; /* Limits height for long videos */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        /* Highlight suspicious rows */
+        .suspicious-row {
+            background-color: #ffeeba !important; /* Yellow highlight */
+            color: #856404;
+            font-weight: bold;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>VisioGuard Analysis Report</h1>
+    </div>
+
+    {% set threshold = 0.6 %}
+
+    <div class="box">
+        <h2>Input Source</h2>
+        <video controls>
+            <source src="/static/uploads/{{ video_filename }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="box">
+        <h2>Analysis Summary</h2>
+        
+        {% if verdict == 'ANOMALY' %}
+            <div class="verdict-box v-anomaly">
+                ⚠️ ANOMALY DETECTED
+            </div>
+        {% else %}
+            <div class="verdict-box v-normal">
+                ✅ NORMAL ACTIVITY
+            </div>
+        {% endif %}
+
+        <div class="score-display">
+            <div class="score-item">
+                <div class="big-number">
+                    {{ "%.3f"|format((scores|max)|float) }}
+                </div>
+                <div class="label">Peak Anomaly Score</div>
+            </div>
+            <div class="score-item">
+                <div class="big-number">{{ scores|length }}</div>
+                <div class="label">Total Frames</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>Temporal Anomaly Graph</h2>
+        <img src="{{ url_for('static', filename='outputs/' ~ plot_filename) }}" alt="Anomaly Plot">
+        <p style="text-align:center; font-size:0.9em; color:#666;">
+            Peaks above {{ threshold }} indicate suspicious activity.
+        </p>
+    </div>
+
+    <div class="box">
+        <h2>Frame-by-Frame Data</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frame #</th>
+                        <th>Anomaly Score</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Jinja doesn't have Python's enumerate, so use loop.index0 #}
+                    {% for s in scores %}
+                    <tr class="{{ 'suspicious-row' if s > threshold else '' }}">
+                        <td>{{ loop.index0 }}</td>
+                        <td>{{ "%.4f"|format(s|float) }}</td>
+                        <td>
+                            {% if s > threshold %}
+                                ⚠️ ALERT
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box" style="text-align:center;">
+        <a href="{{ url_for('index') }}" class="btn-back">
+            ⬅️ Upload another video
+        </a>
+    </div>
+
+
+</body>
+</html>

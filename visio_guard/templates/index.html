@@ -1,13 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VisioGuard – Video Upload</title>
+    <title>VisioGuard – Video Anomaly Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background:#f4f4f4;
+            margin:0;
+            padding:0;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+        .container {
+            background:white;
+            padding:30px;
+            width:420px;
+            box-shadow:0 0 15px rgba(0,0,0,0.2);
+            border-radius:12px;
+            text-align:center;
+        }
+        h1 {
+            margin-bottom:20px;
+            color:#333;
+        }
+        input[type="file"] {
+            margin:15px 0;
+        }
+        button {
+            padding:12px 20px;
+            background:#007bff;
+            border:none;
+            color:white;
+            font-size:16px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+        button:hover {
+            background:#0056c1;
+        }
+    </style>
 </head>
 <body>
-    <h2>Upload Video for Anomaly Detection</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="video" required>
-        <button type="submit">Analyze</button>
-    </form>
+    <div class="container">
+        <h1>VisioGuard</h1>
+        <p>Upload a surveillance video to analyze anomalies</p>
+
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="video" required>
+            <br>
+            <button type="submit">Analyze Video</button>
+        </form>
+    </div>
 </body>
 </html>
