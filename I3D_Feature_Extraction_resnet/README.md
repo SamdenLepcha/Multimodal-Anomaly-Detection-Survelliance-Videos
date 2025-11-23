@@ -1,17 +1,12 @@
 # I3D_Feature_Extraction_resnet
 This repo contains code to extract I3D features with resnet50 backbone given a folder of videos
 
-This code can be used for the below paper. Use at your own risk since this is still untested.
-* [Weakly-supervised Video Anomaly Detection with Robust Temporal Feature Magnitude Learning](https://arxiv.org/pdf/2101.10030.pdf)
 
 ---
 
 ## Credits
-The main resnet code and others is collected from the following repositories. 
-* [pytorch-resnet3d](https://github.com/Tushar-N/pytorch-resnet3d)
-* [pytorch-i3d-feature-extraction](https://github.com/Finspire13/pytorch-i3d-feature-extraction)
+This code is a fork of the authors of the paper "[Weakly-supervised Video Anomaly Detection with Robust Temporal Feature Magnitude Learning](https://arxiv.org/pdf/2101.10030.pdf)". Referenced GitHub [Repo](https://github.com/GowthamGottimukkala/I3D_Feature_Extraction_resnet).
 
-I modified and combined them and also added features to make it suitable for the given task.
 
 ## Overview
 This code takes a folder of videos as input and for each video it saves ```I3D``` feature numpy file of dimension ```1*n/16*2048``` where n is the no.of frames in the video
